@@ -4,7 +4,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04.3 LTS
+    runs-on: ubuntu-latest
 
     steps:
        - name: Init the System

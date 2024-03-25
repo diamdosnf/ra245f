@@ -1,50 +1,55 @@
-name: Build recovery(twrp,shrp,pbrp)
+name: Build recovery (TWRP, SHRP, PBRP)
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
-       - name: Init the System
-         uses: actions/checkout@master
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-       - name: remove pkg and setting repo
-         run: |
-            sudo apt update && sudo apt install wget zip
-            wget -qO - https://github.com/SA-17/Recovery_builder/raw/main/scripts/cleanup.sh  | bash
-            sudo -E apt-get -qq update
-            sudo -E apt-get -qq install bc build-essential tar zip curl libstdc++6 git wget python gcc clang libssl-dev repo rsync flex curl  bison aria2
-            sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
-            sudo chmod a+rx /usr/local/bin/repo
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y wget zip curl git
 
-       - name: Adding and Sync source
-         run: |
-             source config.sh
-             mkdir work
-             cd work
-             repo init -u $MANIFEST -b $BRANCH --depth=1
-             repo sync -c -j`nproc` --force-sync --no-clone-bundle --no-tags
-             git clone $DT_LINK -b $DT_BRANCH device/$VENDOR/$DEVICE
+      - name: Remove Previous Packages and Setup Repo
+        run: |
+          wget -qO - https://github.com/SA-17/Recovery_builder/raw/main/scripts/cleanup.sh | bash
+          sudo curl --create-dirs -L -o /usr/local/bin/repo https://storage.googleapis.com/git-repo-downloads/repo
+          sudo chmod a+rx /usr/local/bin/repo
 
-       - name: Build recovery
-         run: |
-              source config.sh
-              cd work
-              . build/envsetup.sh && lunch $TYPE$SYM$DEVICE-eng && export ALLOW_MISSING_DEPENDENCIES=true && mka $TARGET -j`nproc`
+      - name: Configure Source
+        run: |
+          source config.sh
+          mkdir work
+          cd work
+          repo init -u $MANIFEST -b $BRANCH --depth=1
+          repo sync -c -j$(nproc) --force-sync --no-clone-bundle --no-tags
+          git clone $DT_LINK -b $DT_BRANCH device/$VENDOR/$DEVICE
 
-       - name: Making file
-         run: |
-              source config.sh
-              cd work
-              wget -qO - https://github.com/SA-17/Recovery_builder/raw/main/scripts/bake.sh  | bash
+      - name: Build Recovery
+        run: |
+          source config.sh
+          cd work
+          . build/envsetup.sh
+          lunch $TYPE$SYM$DEVICE-eng
+          export ALLOW_MISSING_DEPENDENCIES=true
+          mka $TARGET -j$(nproc)
 
-       - name: Release recovery
-         uses: softprops/action-gh-release@v1
-         env:
+      - name: Create Release Artifacts
+        run: |
+          source config.sh
+          cd work
+          wget -qO - https://github.com/SA-17/Recovery_builder/raw/main/scripts/bake.sh | bash
+
+      - name: Release Recovery
+        uses: softprops/action-gh-release@v1
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         with:
+        with:
           tag_name: ${{ github.run_id }}
-          name: recovery image
+          name: Recovery Image
           files: work/recovery.zip

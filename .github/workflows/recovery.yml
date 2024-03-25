@@ -12,14 +12,15 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          set -e
           sudo apt update
           sudo apt install -y wget zip curl git
 
       - name: Remove Previous Packages and Setup Repo
         run: |
           wget -qO - https://github.com/SA-17/Recovery_builder/raw/main/scripts/cleanup.sh | bash
-          sudo curl --create-dirs -L -o /usr/local/bin/repo https://storage.googleapis.com/git-repo-downloads/repo
-          sudo chmod a+rx /usr/local/bin/repo
+          curl --create-dirs -L -o /usr/local/bin/repo https://storage.googleapis.com/git-repo-downloads/repo
+          chmod a+rx /usr/local/bin/repo
 
       - name: Configure Source
         run: |

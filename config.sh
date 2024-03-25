@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # About the custom recovery
-export NAME="twrp" # Supported: pbrp, shrp, twrp
+export NAME="pbrp" # Supported: pbrp, shrp, twrp
 export MANIFEST="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp" # The link of manifest
 export BRANCH="twrp-12.1" # The branch of manifest
 

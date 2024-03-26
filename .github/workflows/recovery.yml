@@ -24,12 +24,12 @@ jobs:
 
       - name: Configure Source
         run: |
-          source config.sh
-          mkdir work
-          cd work
-          repo init -u $MANIFEST -b $BRANCH --depth=1
-          repo sync -c -j$(nproc) --force-sync --no-clone-bundle --no-tags
-          git clone $DT_LINK -b $DT_BRANCH device/$VENDOR/$DEVICE
+          source config.sh || { echo "Error: Failed to source config.sh"; exit 1; }
+          mkdir -p work || { echo "Error: Failed to create work directory"; exit 1; }
+          cd work || { echo "Error: Failed to change directory to work"; exit 1; }
+          repo init -u $MANIFEST -b $BRANCH --depth=1 || { echo "Error: Failed to initialize repo"; exit 1; }
+          repo sync -c -j$(nproc) --force-sync --no-clone-bundle --no-tags || { echo "Error: Failed to sync repo"; exit 1; }
+          git clone $DT_LINK -b $DT_BRANCH device/$VENDOR/$DEVICE || { echo "Error: Failed to clone device tree"; exit 1; }
 
       - name: Build Recovery
         run: |
@@ -44,7 +44,8 @@ jobs:
         run: |
           source config.sh || { echo "Error: Failed to source config.sh"; exit 1; }
           cd work || { echo "Error: Failed to change directory to work"; exit 1; }
-          wget -qO - https://github.com/SA-17/Recovery_builder/raw/main/scripts/bake.sh | bash || { echo "Error: Failed to execute bake.sh"; exit 1; }          
+          wget -qO - https://github.com/SA-17/Recovery_builder/raw/main/scripts/bake.sh | bash || { echo "Error: Failed to execute bake.sh"; exit 1; }
+          
       - name: Release Recovery
         uses: softprops/action-gh-release@v1
         env:

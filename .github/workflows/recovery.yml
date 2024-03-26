@@ -38,7 +38,7 @@ jobs:
           . build/envsetup.sh || { echo "Error: Failed to source build/envsetup.sh"; exit 1; }
           lunch $TYPE$SYM$DEVICE-eng || { echo "Error: Failed to lunch the target"; exit 1; }
           export ALLOW_MISSING_DEPENDENCIES=true
-          mka $TARGET -j$(nproc) || { echo "Error: Failed to build the target"; exit 1; }
+          mka recoveryimg -j4 || { echo "Error: Failed to build the target"; exit 1; }
 
       - name: Create Release Artifacts
         run: |

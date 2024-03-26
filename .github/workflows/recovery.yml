@@ -33,19 +33,18 @@ jobs:
 
       - name: Build Recovery
         run: |
-          source config.sh
-          cd work
-          . build/envsetup.sh
-          lunch $TYPE$SYM$DEVICE-eng
+          source config.sh || { echo "Error: Failed to source config.sh"; exit 1; }
+          cd work || { echo "Error: Failed to change directory to work"; exit 1; }
+          . build/envsetup.sh || { echo "Error: Failed to source build/envsetup.sh"; exit 1; }
+          lunch $TYPE$SYM$DEVICE-eng || { echo "Error: Failed to lunch the target"; exit 1; }
           export ALLOW_MISSING_DEPENDENCIES=true
-          mka $TARGET -j$(nproc)
+          mka $TARGET -j$(nproc) || { echo "Error: Failed to build the target"; exit 1; }
 
       - name: Create Release Artifacts
         run: |
-          source config.sh
-          cd work
-          wget -qO - https://github.com/SA-17/Recovery_builder/raw/main/scripts/bake.sh | bash
-
+          source config.sh || { echo "Error: Failed to source config.sh"; exit 1; }
+          cd work || { echo "Error: Failed to change directory to work"; exit 1; }
+          wget -qO - https://github.com/SA-17/Recovery_builder/raw/main/scripts/bake.sh | bash || { echo "Error: Failed to execute bake.sh"; exit 1; }          
       - name: Release Recovery
         uses: softprops/action-gh-release@v1
         env:

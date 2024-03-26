@@ -13,5 +13,5 @@ export VENDOR="samsung" # Device manufacturer or vendor
 export TARGET="recoveryimage" # Build method: recoveryimage, bootimage, vendorboot
 export TYPE="twrp" # Recovery type: omni, twrp, something else
 
-# You don't need to edit these
+#
 export SYM="_"

@@ -1,4 +1,4 @@
-#!/bin/bash env
+#!/bin/bash
 
 if [[ "$TARGET" == "recoveryimage"  ]]; then
    FILE="recovery"
@@ -9,8 +9,7 @@ else
 fi
 
 if [[ "$NAME" == "twrp" ]]; then
-    zip recovery.zip out/target/product/$DEVICE/$FILE.img
+    zip recovery.zip out/target/product/"$DEVICE"/"$FILE".img
 else
-    zip recovery.zip out/target/product/$DEVICE/*.zip
+    zip recovery.zip out/target/product/"$DEVICE"/*.zip
 fi
-

@@ -38,7 +38,7 @@ jobs:
           . build/envsetup.sh
           lunch twrp_a24-eng
           export ALLOW_MISSING_DEPENDENCIES=true
-          mka recoveryimg -j4 || { echo "Error: Failed to build the target"; exit 1; }
+          mka recoveryimage -j4 || { echo "Error: Failed to build the target"; exit 1; }
 
       - name: Create Release Artifacts
         run: |

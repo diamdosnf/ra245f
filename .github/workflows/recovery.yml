@@ -24,7 +24,7 @@ jobs:
 
       - name: Configure Source
         run: |
-          source config.sh || { echo "Error: Failed to source config.sh"; exit 1; }
+          source config.sh
           mkdir -p work || { echo "Error: Failed to create work directory"; exit 1; }
           cd work || { echo "Error: Failed to change directory to work"; exit 1; }
           repo init -u $MANIFEST -b $BRANCH --depth=1 || { echo "Error: Failed to initialize repo"; exit 1; }
@@ -35,8 +35,8 @@ jobs:
         run: |
           source config.sh || { echo "Error: Failed to source config.sh"; exit 1; }
           cd work || { echo "Error: Failed to change directory to work"; exit 1; }
-          . build/envsetup.sh || { echo "Error: Failed to source build/envsetup.sh"; exit 1; }
-          lunch twrp_a24-eng || { echo "Error: Failed to lunch the target"; exit 1; }
+          . build/envsetup.sh
+          lunch twrp_a24-eng
           export ALLOW_MISSING_DEPENDENCIES=true
           mka recoveryimg -j4 || { echo "Error: Failed to build the target"; exit 1; }
 

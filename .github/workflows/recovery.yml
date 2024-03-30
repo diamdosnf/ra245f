@@ -31,6 +31,11 @@ jobs:
           git clone --depth 1 $DT_LINK -b $DT_BRANCH device/$VENDOR/$DEVICE || { echo "Error: Failed to clone device tree"; exit 1; }
           rm -rf .git # Remove .git directory to save space
 
+      - name: Cleanup Build Artifacts
+        run: |
+          cd work || { echo "Error: Failed to change directory to work"; exit 1; }
+          make clean || { echo "Error: Failed to clean build artifacts"; exit 1; }
+
       - name: Build Recovery
         run: |
           source config.sh
@@ -38,7 +43,7 @@ jobs:
           . build/envsetup.sh
           lunch twrp_a24-eng
           export ALLOW_MISSING_DEPENDENCIES=true
-          mka recoveryimage -j2 || { echo "Error: Failed to build the target"; exit 1; }
+          mka recoveryimage -j1 || { echo "Error: Failed to build the target"; exit 1; } # Reduced parallelism
 
       - name: Compress Recovery Image
         run: |

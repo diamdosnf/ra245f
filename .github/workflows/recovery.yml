@@ -12,7 +12,6 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          set -e
           sudo apt update
           sudo apt install -y wget zip curl git
 
@@ -33,19 +32,18 @@ jobs:
 
       - name: Build Recovery
         run: |
-          source config.sh || { echo "Error: Failed to source config.sh"; exit 1; }
+          source config.sh
           cd work || { echo "Error: Failed to change directory to work"; exit 1; }
           . build/envsetup.sh
           lunch twrp_a24-eng
           export ALLOW_MISSING_DEPENDENCIES=true
-          mka recoveryimage -j4 || { echo "Error: Failed to build the target"; exit 1; }
+          mka recoveryimage -j2 || { echo "Error: Failed to build the target"; exit 1; }
 
-      - name: Create Release Artifacts
+      - name: Compress Recovery Image
         run: |
-          source config.sh || { echo "Error: Failed to source config.sh"; exit 1; }
           cd work || { echo "Error: Failed to change directory to work"; exit 1; }
-          wget -qO - https://github.com/SA-17/Recovery_builder/raw/main/scripts/bake.sh | bash || { echo "Error: Failed to execute bake.sh"; exit 1; }
-          
+          zip -r recovery.zip recovery.img || { echo "Error: Failed to compress recovery image"; exit 1; }
+
       - name: Release Recovery
         uses: softprops/action-gh-release@v1
         env:

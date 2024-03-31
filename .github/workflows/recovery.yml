@@ -5,8 +5,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Set TW_THEME environment variable
+        run: export TW_THEME=portrait_hdpi
+        
       - name: Checkout Repository
         uses: actions/checkout@v2
 
